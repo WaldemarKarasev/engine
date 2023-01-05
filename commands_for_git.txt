@@ -9,3 +9,7 @@ git add *.cpp
 git add .
 
 git commit -m "comment"
+
+git remote add origin https://github.com/WaldemarKarasev/engine.git
+git branch -M main
+git push -u origin main
