@@ -4,5 +4,8 @@ git config --global user.email "email"
 git init
 
 git status
+
 git add *.cpp
 git add .
+
+git commit -m "comment"
