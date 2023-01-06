@@ -1,0 +1,6 @@
+*.lib
+*.[ao]
+logs/*.txt
+build
+commands_for_git.txt
+test
