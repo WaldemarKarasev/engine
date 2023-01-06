@@ -1,0 +1,10 @@
+^C:\STUDYING\POGRAMMMING\PROGRAMS\ENGINE\BUILD\CMAKEFILES\00E203C71150103CC0A5D5B5115D0F3A\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Studying/Pogrammming/Programs/engine -BC:/Studying/Pogrammming/Programs/engine/build --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file C:/Studying/Pogrammming/Programs/engine/build/engine.sln
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
