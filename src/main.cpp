@@ -3,6 +3,8 @@
 
 #include <iostream>
 
+#include "Renderer/ShaderProgram.h"
+
 GLfloat point[] = {
      0.0f,  0.5f, 0.0f,
      0.5f, -0.5f, 0.0f,
@@ -104,30 +106,14 @@ int main(void)
     
     glClearColor(1, 1, 0, 1);    
 
-    // Creating shaders
-    // Vertex shader
-    // Shader identifier
-    GLuint vs = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vs, 1, &vertex_shader, nullptr);
-    // Compiling vertex shader
-    glCompileShader(vs);
+    std::string vertexShader(vertex_shader);
+    std::string fragmentShader(fragment_shader);
+    Renderer::ShaderProgram shaderProgram(vertexShader, fragmentShader);
 
-    // Fragment shader
-    // Shader identifier
-    GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fs, 1, &fragment_shader, nullptr);
-    // Compiling fragment shader
-    glCompileShader(fs);
-
-    // Linking vertex and fragment shaders
-    GLuint shader_program = glCreateProgram();
-    glAttachShader(shader_program, vs);
-    glAttachShader(shader_program, fs);
-    glLinkProgram(shader_program);
-
-    // Deleting vs and fs
-    glDeleteShader(vs);
-    glDeleteShader(fs);
+    if (!shaderProgram.isCompiled())
+    {
+        std::cerr << "Can't create shader program!" << std::endl;
+    }
 
     // Passing shader_program to video card
     // VBO creating (Vertex Buffer Object)
@@ -173,7 +159,7 @@ int main(void)
         glClear(GL_COLOR_BUFFER_BIT);
 
         // Drawwing triangle
-        glUseProgram(shader_program);
+        shaderProgram.use();
         glBindVertexArray(vao);
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
