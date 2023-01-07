@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include "Renderer/ShaderProgram.h"
+#include "Resources/ResourceManager.h"
 
 GLfloat point[] = {
      0.0f,  0.5f, 0.0f,
@@ -16,25 +17,6 @@ GLfloat colors[] = {
     0.0f, 1.0f, 0.0f,
     0.0f, 0.0f, 1.0f,
 };
-
-// OpenSL language???
-const char* vertex_shader =
-"#version 460\n"
-"layout(location = 0) in vec3 vertex_position;"
-"layout(location = 1) in vec3 vertex_color;"
-"out vec3 color;"
-"void main() {"
-"   color = vertex_color;"
-"   gl_Position = vec4(vertex_position, 1.0);"
-"}";
-
-const char* fragment_shader =
-"#version 460\n"
-"in vec3 color;"
-"out vec4 frag_color;"
-"void main() {"
-"   frag_color = vec4(color, 1.0f);"
-"};";
 
 int g_windowSizeX = 640;
 int g_windowSizeY = 480;
@@ -60,7 +42,7 @@ void glfwKeyCallback(GLFWwindow* pWindow, int key, int scancode, int action, int
     }
 }
 
-int main(void)
+int main(int argc, char** argv)
 {
     /* Initialize the library */
     if (!glfwInit())
@@ -106,70 +88,73 @@ int main(void)
     
     glClearColor(1, 1, 0, 1);    
 
-    std::string vertexShader(vertex_shader);
-    std::string fragmentShader(fragment_shader);
-    Renderer::ShaderProgram shaderProgram(vertexShader, fragmentShader);
-
-    if (!shaderProgram.isCompiled())
+    // Creating scope because we need delete ShaderPrograms before deleting glContext???
     {
-        std::cerr << "Can't create shader program!" << std::endl;
-    }
-
-    // Passing shader_program to video card
-    // VBO creating (Vertex Buffer Object)
-    // Creating buffer for points data
-    GLuint points_vbo = 0;
-    glGenBuffers(1, &points_vbo);
-    // Activate points_vbo 
-    glBindBuffer(GL_ARRAY_BUFFER, points_vbo);
-    // Fill data in points_vbo // passing data from RAM to Video Card memory
-    glBufferData(GL_ARRAY_BUFFER, sizeof(point), point, GL_STATIC_DRAW);
-
-    // Creating buffer for colors data
-    GLuint colors_vbo = 0;
-    glGenBuffers(1, &colors_vbo);
-    // Activate colors_vbo 
-    glBindBuffer(GL_ARRAY_BUFFER, colors_vbo);
-    // Fill data in colors_vbo // passing data from RAM to Video Card memory
-    glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
+        // ResourceManager initialize
+        ResourceManager resourceManager(argv[0]);
+        auto pDefaultShaderProgram = resourceManager.loadShaders("DefaultShader", "res/shaders/vertex.txt", "res/shaders/fragment.txt");
+        if (!pDefaultShaderProgram)
+        {
+            std::cerr << "Can't create shader program: " << "DefaultShader" << std::endl;
+            return -1;
+        }
 
 
-    // Linking buffers data and shader???
-    // Creating VAO (Vertex Attribute {???or Array???} Object)
-    GLuint vao = 0;
-    glGenVertexArrays(1, &vao);
-    glBindVertexArray(vao);
+        // Passing shader_program to video card
+        // VBO creating (Vertex Buffer Object)
+        // Creating buffer for points data
+        GLuint points_vbo = 0;
+        glGenBuffers(1, &points_vbo);
+        // Activate points_vbo 
+        glBindBuffer(GL_ARRAY_BUFFER, points_vbo);
+        // Fill data in points_vbo // passing data from RAM to Video Card memory
+        glBufferData(GL_ARRAY_BUFFER, sizeof(point), point, GL_STATIC_DRAW);
 
-    // Link VBO and VAO
-    // for points
-    glEnableVertexAttribArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, points_vbo);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
-    // for colors
-    glEnableVertexAttribArray(1);
-    glBindBuffer(GL_ARRAY_BUFFER, colors_vbo);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+        // Creating buffer for colors data
+        GLuint colors_vbo = 0;
+        glGenBuffers(1, &colors_vbo);
+        // Activate colors_vbo 
+        glBindBuffer(GL_ARRAY_BUFFER, colors_vbo);
+        // Fill data in colors_vbo // passing data from RAM to Video Card memory
+        glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
 
 
-
-    /* Loop until the user closes the window */
-    while (!glfwWindowShouldClose(pWindow))
-    {
-        /* Render here */
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        // Drawwing triangle
-        shaderProgram.use();
+        // Linking buffers data and shader???
+        // Creating VAO (Vertex Attribute {???or Array???} Object)
+        GLuint vao = 0;
+        glGenVertexArrays(1, &vao);
         glBindVertexArray(vao);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
 
-        /* Swap front and back buffers */
-        glfwSwapBuffers(pWindow);
+        // Link VBO and VAO
+        // for points
+        glEnableVertexAttribArray(0);
+        glBindBuffer(GL_ARRAY_BUFFER, points_vbo);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+        // for colors
+        glEnableVertexAttribArray(1);
+        glBindBuffer(GL_ARRAY_BUFFER, colors_vbo);
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
 
-        /* Poll for and process events */
-        glfwPollEvents();
+
+
+        /* Loop until the user closes the window */
+        while (!glfwWindowShouldClose(pWindow))
+        {
+            /* Render here */
+            glClear(GL_COLOR_BUFFER_BIT);
+
+            // Drawwing triangle
+            pDefaultShaderProgram->use();
+            glBindVertexArray(vao);
+            glDrawArrays(GL_TRIANGLES, 0, 3);
+
+            /* Swap front and back buffers */
+            glfwSwapBuffers(pWindow);
+
+            /* Poll for and process events */
+            glfwPollEvents();
+        }
     }
-
     glfwTerminate();
     return 0;
 }
