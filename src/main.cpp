@@ -5,6 +5,7 @@
 
 #include "Renderer/ShaderProgram.h"
 #include "Resources/ResourceManager.h"
+#include "Renderer/Texture2D.h"
 
 GLfloat point[] = {
      0.0f,  0.5f, 0.0f,
@@ -17,6 +18,13 @@ GLfloat colors[] = {
     0.0f, 1.0f, 0.0f,
     0.0f, 0.0f, 1.0f,
 };
+
+GLfloat texCoord[] = {
+    0.5f, 1.0f,
+    1.0f, 0.0f,
+    0.0f, 0.0f
+};
+
 
 int g_windowSizeX = 640;
 int g_windowSizeY = 480;
@@ -99,7 +107,7 @@ int main(int argc, char** argv)
             return -1;
         }
 
-        resourceManager.loadTexture("DefaultTexture", "res/textures/map_16x16.png");
+        auto tex = resourceManager.loadTexture("DefaultTexture", "res/textures/map_16x16.png");
 
 
         // Passing shader_program to video card
@@ -120,6 +128,14 @@ int main(int argc, char** argv)
         // Fill data in colors_vbo // passing data from RAM to Video Card memory
         glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
 
+        // Creating buffer for texture data
+        GLuint texCoord_vbo = 0;
+        glGenBuffers(1, &texCoord_vbo);
+        // Activate texture_vbo 
+        glBindBuffer(GL_ARRAY_BUFFER, texCoord_vbo);
+        // Fill data in texture_vbo // passing data from RAM to Video Card memory
+        glBufferData(GL_ARRAY_BUFFER, sizeof(texCoord), texCoord, GL_STATIC_DRAW);
+
 
         // Linking buffers data and shader???
         // Creating VAO (Vertex Attribute {???or Array???} Object)
@@ -136,9 +152,15 @@ int main(int argc, char** argv)
         glEnableVertexAttribArray(1);
         glBindBuffer(GL_ARRAY_BUFFER, colors_vbo);
         glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+        // for textures
+        glEnableVertexAttribArray(2);
+        glBindBuffer(GL_ARRAY_BUFFER, texCoord_vbo);
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
 
-
-
+        // Texture set
+        pDefaultShaderProgram->use();
+        pDefaultShaderProgram->setInt("tex", 0);
+          
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(pWindow))
         {
@@ -148,6 +170,7 @@ int main(int argc, char** argv)
             // Drawing triangle
             pDefaultShaderProgram->use();
             glBindVertexArray(vao);
+            tex->bind();
             glDrawArrays(GL_TRIANGLES, 0, 3);
 
             /* Swap front and back buffers */

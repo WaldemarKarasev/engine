@@ -23,6 +23,9 @@ namespace Renderer {
 		// Shader enamle function
 		void use() const;
 
+		//
+		void setInt(const std::string& nmae, const GLuint value);
+
 		// Copy assignment is forbidden
 		ShaderProgram& operator=(const ShaderProgram& shaderProgram) = delete;
 
