@@ -99,6 +99,8 @@ int main(int argc, char** argv)
             return -1;
         }
 
+        resourceManager.loadTexture("DefaultTexture", "res/textures/map_16x16.png");
+
 
         // Passing shader_program to video card
         // VBO creating (Vertex Buffer Object)
@@ -143,7 +145,7 @@ int main(int argc, char** argv)
             /* Render here */
             glClear(GL_COLOR_BUFFER_BIT);
 
-            // Drawwing triangle
+            // Drawing triangle
             pDefaultShaderProgram->use();
             glBindVertexArray(vao);
             glDrawArrays(GL_TRIANGLES, 0, 3);
