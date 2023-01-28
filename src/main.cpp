@@ -1,6 +1,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include <glm/glm/vec2.hpp>
+
 #include <iostream>
 
 #include "Renderer/ShaderProgram.h"
@@ -26,17 +28,16 @@ GLfloat texCoord[] = {
 };
 
 
-int g_windowSizeX = 640;
-int g_windowSizeY = 480;
+glm::ivec2 g_windowSize(640, 480);
 
 // Window size callback
 void glfwWindowSizeCallback(GLFWwindow* pWindow, int width, int height)
 {
-    g_windowSizeX = width;
-    g_windowSizeY = height;
+    g_windowSize.x = width;
+    g_windowSize.y = height;
     
     // show OpenGL where to draw
-    glViewport(0, 0, g_windowSizeX, g_windowSizeY);
+    glViewport(0, 0, g_windowSize.x, g_windowSize.y);
 
 }
 
@@ -69,7 +70,7 @@ int main(int argc, char** argv)
     
 
     /* Create a windowed mode window and its OpenGL context */
-    GLFWwindow* pWindow = glfwCreateWindow(g_windowSizeX, g_windowSizeY, "engine", nullptr, nullptr);
+    GLFWwindow* pWindow = glfwCreateWindow(g_windowSize.x, g_windowSize.y, "engine", nullptr, nullptr);
     if (!pWindow)
     {
         std::cout << "glfwCreateWindow failed!" << std::endl;
