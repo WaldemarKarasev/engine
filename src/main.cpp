@@ -2,6 +2,8 @@
 #include <GLFW/glfw3.h>
 
 #include <glm/glm/vec2.hpp>
+#include <glm/glm/mat4x4.hpp>
+#include <glm/glm/gtc/matrix_transform.hpp>
 
 #include <iostream>
 
@@ -10,9 +12,9 @@
 #include "Renderer/Texture2D.h"
 
 GLfloat point[] = {
-     0.0f,  0.5f, 0.0f,
-     0.5f, -0.5f, 0.0f,
-    -0.5f, -0.5f, 0.0f
+     0.0f,  50.f, 0.f,
+     50.f, -50.f, 0.f,
+    -50.f, -50.f, 0.f
 };
 
 GLfloat colors[] = {
@@ -94,6 +96,7 @@ int main(int argc, char** argv)
     // Displaying OpenGL version
     std::cout << "Renderer: " << glGetString(GL_RENDERER) << std::endl;
     std::cout << "OpenGL version: " << glGetString(GL_VERSION) << std::endl;
+    std::cout << "executablePath argv[0]: " << argv[0] << std::endl;
     
     glClearColor(1, 1, 0, 1);    
 
@@ -162,6 +165,20 @@ int main(int argc, char** argv)
         pDefaultShaderProgram->use();
         pDefaultShaderProgram->setInt("tex", 0);
           
+        // Transformation matrix
+        // for the 1st triangle
+        glm::mat4 modelMatrix_1 = glm::mat4(1.f);
+        modelMatrix_1 = glm::translate(modelMatrix_1, glm::vec3(50.f, 50.f, 0.f));
+        
+        // for the 2nd triangle
+        glm::mat4 modelMatrix_2 = glm::mat4(1.f);
+        modelMatrix_2 = glm::translate(modelMatrix_2, glm::vec3(590.f, 50.f, 0.f));
+
+        glm::mat4 projectionMatrix = glm::ortho(0.f, static_cast<float>(g_windowSize.x), 0.f, static_cast<float>(g_windowSize.y), -100.f, 100.f);
+
+        pDefaultShaderProgram->setMatrix("projectionMat", projectionMatrix);
+
+
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(pWindow))
         {
@@ -172,6 +189,13 @@ int main(int argc, char** argv)
             pDefaultShaderProgram->use();
             glBindVertexArray(vao);
             tex->bind();
+
+            // 1st triangle (left)
+            pDefaultShaderProgram->setMatrix("modelMat", modelMatrix_1);
+            glDrawArrays(GL_TRIANGLES, 0, 3);
+
+            // 1st triangle (right)
+            pDefaultShaderProgram->setMatrix("modelMat", modelMatrix_2);
             glDrawArrays(GL_TRIANGLES, 0, 3);
 
             /* Swap front and back buffers */
