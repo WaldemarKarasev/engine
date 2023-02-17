@@ -26,8 +26,10 @@ namespace Renderer {
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, m_ID);
 		
-		glTexImage2D(GL_TEXTURE_2D, 0, m_mode, m_width, m_height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-		
+		// TODO: correct mistake with incorrect displaying texture in png format
+		// first m_mode=input_format(internal), second m_mode=desired_format
+		glTexImage2D(GL_TEXTURE_2D, 0, m_mode, m_width, m_height, 0, m_mode, GL_UNSIGNED_BYTE, data);
+	
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapMode);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapMode);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter);
@@ -64,6 +66,23 @@ namespace Renderer {
 	Texture2D::~Texture2D()
 	{
 		glDeleteTextures(1, &m_ID);
+	}
+
+	void Texture2D::addSubTexture(const std::string name, const glm::vec2& leftBottomUV, const glm::vec2& rightTopUV)
+	{
+		m_subTextures.emplace(std::move(name), SubTexture2D(leftBottomUV, rightTopUV));
+
+	}
+
+	const Texture2D::SubTexture2D Texture2D::getSubTexture(const std::string& name) const
+	{
+		auto it = m_subTextures.find(name);
+		if (it != m_subTextures.end())
+		{
+			return it->second;
+		}
+		const static SubTexture2D defaultSubTexture;
+		return defaultSubTexture;
 	}
 
 	void Texture2D::bind() const

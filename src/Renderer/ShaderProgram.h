@@ -2,7 +2,7 @@
 
 #include <glad/glad.h>
 #include <string>
-#include <glm/glm/mat4x4.hpp>
+#include <glm/mat4x4.hpp>
 
 namespace Renderer {
 	class ShaderProgram {
@@ -28,7 +28,7 @@ namespace Renderer {
 		void setInt(const std::string& nmae, const GLuint value);
 
 		// set transformation matrix in shader
-		void setMatrix(const std::string& name, const glm::mat4& matrix);
+		void setMatrix4(const std::string& name, const glm::mat4& matrix);
 
 		// Copy assignment is forbidden
 		ShaderProgram& operator=(const ShaderProgram& shaderProgram) = delete;

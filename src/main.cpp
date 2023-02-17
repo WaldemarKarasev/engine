@@ -1,26 +1,57 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include <glm/glm/vec2.hpp>
-#include <glm/glm/mat4x4.hpp>
-#include <glm/glm/gtc/matrix_transform.hpp>
+#include <glm/vec2.hpp>
+#include <glm/mat4x4.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 #include <iostream>
+#include <cmath>
+#include <vector>
+#include <string>
 
 #include "Renderer/ShaderProgram.h"
 #include "Resources/ResourceManager.h"
 #include "Renderer/Texture2D.h"
+#include "Renderer/Sprite.h"
+
+//#define STB_IMAGE_IMPLEMENTATION
+#include "Resources/stb_image.h"
+
+#define ASSERT(x) if (!(x)) __debugbreak(); // specific for msvc
+#define GLCall(x) GLClearError();\
+    x;\
+    ASSERT(GLLogCall(#x, __FILE__, __LINE__))
+
+static void GLClearError()
+{
+    while (glGetError() != GL_NO_ERROR);
+}
+
+static bool GLLogCall(const char* function, const char* file, int line)
+{
+    while (GLenum error = glGetError())
+    {
+        std::cout << "[OpenGL Error] (" << error << "): " << function <<
+            " " << file << ":" << line << std::endl;
+        return false;
+    }
+}
 
 GLfloat point[] = {
-     0.0f,  50.f, 0.f,
-     50.f, -50.f, 0.f,
-    -50.f, -50.f, 0.f
+     0.0f,   50.f, 0.f,
+     50.0f, -50.f, 0.f,
+    -50.f,  -50.f, 0.f
+
+     //50.0f,  50.f, /*0.f,*/
+     //50.f,  0.0f, /*0.f,*/
+     //0.0f, 0.0f/*, 0.f*/
 };
 
 GLfloat colors[] = {
     1.0f, 0.0f, 0.0f,
     0.0f, 1.0f, 0.0f,
-    0.0f, 0.0f, 1.0f,
+    0.0f, 0.0f, 1.0f
 };
 
 GLfloat texCoord[] = {
@@ -43,7 +74,7 @@ void glfwWindowSizeCallback(GLFWwindow* pWindow, int width, int height)
 
 }
 
-
+ 
 // Keypress callback
 void glfwKeyCallback(GLFWwindow* pWindow, int key, int scancode, int action, int mode)
 {
@@ -98,7 +129,7 @@ int main(int argc, char** argv)
     std::cout << "OpenGL version: " << glGetString(GL_VERSION) << std::endl;
     std::cout << "executablePath argv[0]: " << argv[0] << std::endl;
     
-    glClearColor(1, 1, 0, 1);    
+    glClearColor(0, 1, 1, 1);    
 
     // Creating scope because we need delete ShaderPrograms before deleting glContext???
     {
@@ -111,44 +142,65 @@ int main(int argc, char** argv)
             return -1;
         }
 
+
+        // Sprite initializing START
+        auto pSpriteShaderProgram = resourceManager.loadShaders("SpriteShader", "res/shaders/vSprite.txt", "res/shaders/fSprite.txt");
+        if (!pSpriteShaderProgram)
+        {
+            std::cerr << "Can't create shader program: " << "SpriteShader" << std::endl;
+            return -1;
+        }
+
         auto tex = resourceManager.loadTexture("DefaultTexture", "res/textures/map_16x16.png");
 
+        // subtextures list
+        std::vector<std::string> subTextureNames = { "0", "1", "2", "3", "4", "5", "6"};
+        auto pTextureAtlas = resourceManager.loadTextureAtlas("DefaultTextureAtlas", "res/textures/map_16x16.png", std::move(subTextureNames), 16, 16);
 
-        // Passing shader_program to video card
-        // VBO creating (Vertex Buffer Object)
-        // Creating buffer for points data
+        auto pSprite = resourceManager.loadSprite("NewSprite", "DefaultTextureAtlas", "SpriteShader", 100, 100, "0");
+        pSprite->setPosition(glm::vec2(300, 140));
+        //pSprite->setRotation(45.0f);
+        // Sprite initializing END
+
+
+
+
+        
+         //Passing shader_program to video card
+         //VBO creating (Vertex Buffer Object)
+         //Creating buffer for points data
         GLuint points_vbo = 0;
         glGenBuffers(1, &points_vbo);
-        // Activate points_vbo 
+         //Activate points_vbo 
         glBindBuffer(GL_ARRAY_BUFFER, points_vbo);
-        // Fill data in points_vbo // passing data from RAM to Video Card memory
+         //Fill data in points_vbo // passing data from RAM to Video Card memory
         glBufferData(GL_ARRAY_BUFFER, sizeof(point), point, GL_STATIC_DRAW);
 
-        // Creating buffer for colors data
+         //Creating buffer for colors data
         GLuint colors_vbo = 0;
         glGenBuffers(1, &colors_vbo);
         // Activate colors_vbo 
         glBindBuffer(GL_ARRAY_BUFFER, colors_vbo);
-        // Fill data in colors_vbo // passing data from RAM to Video Card memory
+         //Fill data in colors_vbo // passing data from RAM to Video Card memory
         glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
 
-        // Creating buffer for texture data
+         //Creating buffer for texture data
         GLuint texCoord_vbo = 0;
         glGenBuffers(1, &texCoord_vbo);
-        // Activate texture_vbo 
+         //Activate texture_vbo 
         glBindBuffer(GL_ARRAY_BUFFER, texCoord_vbo);
-        // Fill data in texture_vbo // passing data from RAM to Video Card memory
+         //Fill data in texture_vbo // passing data from RAM to Video Card memory
         glBufferData(GL_ARRAY_BUFFER, sizeof(texCoord), texCoord, GL_STATIC_DRAW);
 
 
-        // Linking buffers data and shader???
-        // Creating VAO (Vertex Attribute {???or Array???} Object)
+         //Linking buffers data and shader???
+         //Creating VAO (Vertex Attribute {???or Array???} Object)
         GLuint vao = 0;
         glGenVertexArrays(1, &vao);
         glBindVertexArray(vao);
 
-        // Link VBO and VAO
-        // for points
+        //Link VBO and VAO
+         //for points
         glEnableVertexAttribArray(0);
         glBindBuffer(GL_ARRAY_BUFFER, points_vbo);
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
@@ -161,41 +213,55 @@ int main(int argc, char** argv)
         glBindBuffer(GL_ARRAY_BUFFER, texCoord_vbo);
         glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
 
-        // Texture set
-        pDefaultShaderProgram->use();
-        pDefaultShaderProgram->setInt("tex", 0);
-          
+        glBindVertexArray(0);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        
+        
+       
+        
+
         // Transformation matrix
         // for the 1st triangle
         glm::mat4 modelMatrix_1 = glm::mat4(1.f);
-        modelMatrix_1 = glm::translate(modelMatrix_1, glm::vec3(50.f, 50.f, 0.f));
+        modelMatrix_1 = glm::translate(modelMatrix_1, glm::vec3(100.f, 200.f, 0.f));
         
         // for the 2nd triangle
         glm::mat4 modelMatrix_2 = glm::mat4(1.f);
         modelMatrix_2 = glm::translate(modelMatrix_2, glm::vec3(590.f, 50.f, 0.f));
 
+        // orthographic projection matrix
         glm::mat4 projectionMatrix = glm::ortho(0.f, static_cast<float>(g_windowSize.x), 0.f, static_cast<float>(g_windowSize.y), -100.f, 100.f);
+        
+        
+        pSpriteShaderProgram->use();
+        pSpriteShaderProgram->setMatrix4("projectionMat", projectionMatrix);
+        
+        
+        pDefaultShaderProgram->use();
+        pDefaultShaderProgram->setInt("tex", 0);
+        pDefaultShaderProgram->setMatrix4("projectionMat", projectionMatrix);
 
-        pDefaultShaderProgram->setMatrix("projectionMat", projectionMatrix);
-
-
+        
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(pWindow))
         {
             /* Render here */
             glClear(GL_COLOR_BUFFER_BIT);
+            
 
-            // Drawing triangle
+            
+            pSprite->render();
+
+            
+            // triangle render
             pDefaultShaderProgram->use();
             glBindVertexArray(vao);
             tex->bind();
 
-            // 1st triangle (left)
-            pDefaultShaderProgram->setMatrix("modelMat", modelMatrix_1);
+            pDefaultShaderProgram->setMatrix4("modelMat", modelMatrix_1);
             glDrawArrays(GL_TRIANGLES, 0, 3);
 
-            // 1st triangle (right)
-            pDefaultShaderProgram->setMatrix("modelMat", modelMatrix_2);
+            pDefaultShaderProgram->setMatrix4("modelMat", modelMatrix_2);
             glDrawArrays(GL_TRIANGLES, 0, 3);
 
             /* Swap front and back buffers */
