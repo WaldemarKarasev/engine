@@ -13,11 +13,8 @@
 #include <vector>
 #include <string>
 
-#include "Renderer/ShaderProgram.h"
+#include "Game/Game.h"
 #include "Resources/ResourceManager.h"
-#include "Renderer/Texture2D.h"
-#include "Renderer/Sprite.h"
-#include "Renderer/AnimatedSprite.h"
 
 //#define STB_IMAGE_IMPLEMENTATION
 #include "Resources/stb_image.h"
@@ -42,33 +39,10 @@ static bool GLLogCall(const char* function, const char* file, int line)
     }
 }
 
-GLfloat point[] = {
-     0.0f,   50.f, 0.f,
-     50.0f, -50.f, 0.f,
-    -50.f,  -50.f, 0.f
-
-     //50.0f,  50.f, /*0.f,*/
-     //50.f,  0.0f, /*0.f,*/
-     //0.0f, 0.0f/*, 0.f*/
-};
-
-GLfloat colors[] = {
-    1.0f, 0.0f, 0.0f,
-    0.0f, 1.0f, 0.0f,
-    0.0f, 0.0f, 1.0f
-};
-
-GLfloat texCoord[] = {
-    0.5f, 1.0f,
-    1.0f, 0.0f,
-    0.0f, 0.0f
-};
-
-
 glm::ivec2 g_windowSize(640, 480);
 
-// for testing only
-bool isStar = false;
+Game g_game(g_windowSize);
+
 
 // Window size callback
 void glfwWindowSizeCallback(GLFWwindow* pWindow, int width, int height)
@@ -89,10 +63,7 @@ void glfwKeyCallback(GLFWwindow* pWindow, int key, int scancode, int action, int
     {
         glfwSetWindowShouldClose(pWindow, GL_TRUE);
     }
-    if (key == GLFW_KEY_ENTER && action == GLFW_PRESS)
-    {
-        isStar = !isStar;
-    }
+    g_game.setKey(key, action);
 }
 
 int main(int argc, char** argv)
@@ -140,174 +111,29 @@ int main(int argc, char** argv)
     std::cout << "OpenGL version: " << glGetString(GL_VERSION) << std::endl;
     std::cout << "executablePath argv[0]: " << argv[0] << std::endl;
     
-    glClearColor(0, 1, 1, 1);    
+    glClearColor(0, 0, 0, 1);    
 
     // Creating scope because we need delete ShaderPrograms before deleting glContext???
     {
         // ResourceManager initialize
-        ResourceManager resourceManager(argv[0]);
-        auto pDefaultShaderProgram = resourceManager.loadShaders("DefaultShader", "res/shaders/vertex.txt", "res/shaders/fragment.txt");
-        if (!pDefaultShaderProgram)
-        {
-            std::cerr << "Can't create shader program: " << "DefaultShader" << std::endl;
-            return -1;
-        }
-
-
-        // Sprite initializing START
-        auto pSpriteShaderProgram = resourceManager.loadShaders("SpriteShader", "res/shaders/vSprite.txt", "res/shaders/fSprite.txt");
-        if (!pSpriteShaderProgram)
-        {
-            std::cerr << "Can't create shader program: " << "SpriteShader" << std::endl;
-            return -1;
-        }
-
-        auto tex = resourceManager.loadTexture("DefaultTexture", "res/textures/map_16x16.png");
-
-
-
-
-        // subtextures list
-        std::vector<std::string> subTextureNames = { "eagle", "deadEagle", "star0", "star1", "star2", "star3", "star4", "star5"};
-        auto pTextureAtlas = resourceManager.loadTextureAtlas("DefaultTextureAtlas", "res/textures/map_16x16.png", std::move(subTextureNames), 16, 16);
-        
-        auto pSprite = resourceManager.loadSprite("NewSprite", "DefaultTextureAtlas", "SpriteShader", 100, 100, "eagle");
-        pSprite->setPosition(glm::vec2(300, 100));
-
-        auto pAnimatedSprite = resourceManager.loadAnimatedSprite("NewAnimatedSprite", "DefaultTextureAtlas", "SpriteShader", 100, 100, "eagle");
-        pAnimatedSprite->setPosition(glm::vec2(300, 300));
-
-        std::vector<std::pair<std::string, uint64_t>> eagleState;
-        eagleState.emplace_back(std::make_pair<std::string, uint64_t>("eagle", 1000000000));
-        eagleState.emplace_back(std::make_pair<std::string, uint64_t>("deadEagle", 1000000000));
-
-        std::vector<std::pair<std::string, uint64_t>> starState;
-        starState.emplace_back(std::make_pair<std::string, uint64_t>("star0", 1000000000));
-        starState.emplace_back(std::make_pair<std::string, uint64_t>("star1", 1000000000));
-        starState.emplace_back(std::make_pair<std::string, uint64_t>("star2", 1000000000));
-        starState.emplace_back(std::make_pair<std::string, uint64_t>("star3", 1000000000));
-        starState.emplace_back(std::make_pair<std::string, uint64_t>("star4", 1000000000));
-        starState.emplace_back(std::make_pair<std::string, uint64_t>("star5", 1000000000));
-
-        pAnimatedSprite->insertState("eagleState", std::move(eagleState));
-        pAnimatedSprite->insertState("starState", std::move(starState));
-
-        pAnimatedSprite->setState("eagleState");
-
-
-
-        
-         //Passing shader_program to video card
-         //VBO creating (Vertex Buffer Object)
-         //Creating buffer for points data
-        GLuint points_vbo = 0;
-        glGenBuffers(1, &points_vbo);
-         //Activate points_vbo 
-        glBindBuffer(GL_ARRAY_BUFFER, points_vbo);
-         //Fill data in points_vbo // passing data from RAM to Video Card memory
-        glBufferData(GL_ARRAY_BUFFER, sizeof(point), point, GL_STATIC_DRAW);
-
-         //Creating buffer for colors data
-        GLuint colors_vbo = 0;
-        glGenBuffers(1, &colors_vbo);
-        // Activate colors_vbo 
-        glBindBuffer(GL_ARRAY_BUFFER, colors_vbo);
-         //Fill data in colors_vbo // passing data from RAM to Video Card memory
-        glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
-
-         //Creating buffer for texture data
-        GLuint texCoord_vbo = 0;
-        glGenBuffers(1, &texCoord_vbo);
-         //Activate texture_vbo 
-        glBindBuffer(GL_ARRAY_BUFFER, texCoord_vbo);
-         //Fill data in texture_vbo // passing data from RAM to Video Card memory
-        glBufferData(GL_ARRAY_BUFFER, sizeof(texCoord), texCoord, GL_STATIC_DRAW);
-
-
-         //Linking buffers data and shader???
-         //Creating VAO (Vertex Attribute {???or Array???} Object)
-        GLuint vao = 0;
-        glGenVertexArrays(1, &vao); 
-        glBindVertexArray(vao);
-
-        //Link VBO and VAO
-         //for points
-        glEnableVertexAttribArray(0);
-        glBindBuffer(GL_ARRAY_BUFFER, points_vbo);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
-        // for colors
-        glEnableVertexAttribArray(1);
-        glBindBuffer(GL_ARRAY_BUFFER, colors_vbo);
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
-        // for textures
-        glEnableVertexAttribArray(2);
-        glBindBuffer(GL_ARRAY_BUFFER, texCoord_vbo);
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
-
-        glBindVertexArray(0);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        
-        
-       
-        
-
-        // Transformation matrix
-        // for the 1st triangle
-        glm::mat4 modelMatrix_1 = glm::mat4(1.f);
-        modelMatrix_1 = glm::translate(modelMatrix_1, glm::vec3(100.f, 200.f, 0.f));
-        
-        // for the 2nd triangle
-        glm::mat4 modelMatrix_2 = glm::mat4(1.f);
-        modelMatrix_2 = glm::translate(modelMatrix_2, glm::vec3(590.f, 50.f, 0.f));
-
-        // orthographic projection matrix
-        glm::mat4 projectionMatrix = glm::ortho(0.f, static_cast<float>(g_windowSize.x), 0.f, static_cast<float>(g_windowSize.y), -100.f, 100.f);
-        
-        
-        pSpriteShaderProgram->use();
-        pSpriteShaderProgram->setMatrix4("projectionMat", projectionMatrix);
-        
-        
-        pDefaultShaderProgram->use();
-        pDefaultShaderProgram->setInt("tex", 0);
-        pDefaultShaderProgram->setMatrix4("projectionMat", projectionMatrix);
+        ResourceManager::setExecutablePath(argv[0]);
+        g_game.init();
 
         auto lastTime = std::chrono::high_resolution_clock::now();
 
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(pWindow))
         {
-            if (isStar)
-            {
-                pAnimatedSprite->setState("starState");
-            }
-            else
-            {
-                pAnimatedSprite->setState("eagleState");
-            }
+            
             auto currentTime = std::chrono::high_resolution_clock::now();
             uint64_t duration = std::chrono::duration_cast<std::chrono::nanoseconds>(currentTime - lastTime).count();
             lastTime = currentTime;
+            g_game.update(duration);
 
             /* Render here */
             glClear(GL_COLOR_BUFFER_BIT);
-            
-
-            pAnimatedSprite->update(duration);
-            pAnimatedSprite->render();
-            
-
-            pSprite->render();
-            // triangle render
-            pDefaultShaderProgram->use();
-            glBindVertexArray(vao);
-            tex->bind();
-
-            pDefaultShaderProgram->setMatrix4("modelMat", modelMatrix_1);
-            glDrawArrays(GL_TRIANGLES, 0, 3);
-
-            pDefaultShaderProgram->setMatrix4("modelMat", modelMatrix_2);
-            glDrawArrays(GL_TRIANGLES, 0, 3);
+         
+            g_game.render();
 
             /* Swap front and back buffers */
             glfwSwapBuffers(pWindow);
@@ -315,6 +141,7 @@ int main(int argc, char** argv)
             /* Poll for and process events */
             glfwPollEvents();
         }
+        ResourceManager::unloadResources();
     }
     glfwTerminate();
     return 0;
