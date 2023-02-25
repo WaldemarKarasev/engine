@@ -8,7 +8,6 @@
 #include <iostream>
 #include <chrono>
 
-// mine
 #include <cmath>
 #include <vector>
 #include <string>
@@ -16,8 +15,10 @@
 #include "Game/Game.h"
 #include "Resources/ResourceManager.h"
 
-//#define STB_IMAGE_IMPLEMENTATION
-#include "Resources/stb_image.h"
+#include "Renderer/Renderer.h"
+
+
+
 
 #define ASSERT(x) if (!(x)) __debugbreak(); // specific for msvc
 #define GLCall(x) GLClearError();\
@@ -51,7 +52,8 @@ void glfwWindowSizeCallback(GLFWwindow* pWindow, int width, int height)
     g_windowSize.y = height;
     
     // show OpenGL where to draw
-    glViewport(0, 0, g_windowSize.x, g_windowSize.y);
+    //glViewport(0, 0, g_windowSize.x, g_windowSize.y);
+    RendererEngine::Renderer::setViewport(width, height);
 
 }
 
@@ -107,11 +109,14 @@ int main(int argc, char** argv)
     }
 
     // Displaying OpenGL version
-    std::cout << "Renderer: " << glGetString(GL_RENDERER) << std::endl;
-    std::cout << "OpenGL version: " << glGetString(GL_VERSION) << std::endl;
+    std::cout << "Renderer: " << RendererEngine::Renderer::getRendererStr() << std::endl;
+    std::cout << "OpenGL version: " << RendererEngine::Renderer::getVersionStr() << std::endl;
     std::cout << "executablePath argv[0]: " << argv[0] << std::endl;
     
-    glClearColor(0, 0, 0, 1);    
+
+    //glClearColor(0, 0, 0, 1);    
+    RendererEngine::Renderer::setClearColor(0, 0, 0, 1);
+
 
     // Creating scope because we need delete ShaderPrograms before deleting glContext???
     {
@@ -124,22 +129,27 @@ int main(int argc, char** argv)
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(pWindow))
         {
+            /* Poll for and process events */
+            glfwPollEvents();
             
+
+
             auto currentTime = std::chrono::high_resolution_clock::now();
             uint64_t duration = std::chrono::duration_cast<std::chrono::nanoseconds>(currentTime - lastTime).count();
             lastTime = currentTime;
             g_game.update(duration);
 
+
+
             /* Render here */
-            glClear(GL_COLOR_BUFFER_BIT);
+            RendererEngine::Renderer::clear();
+            //glClear(GL_COLOR_BUFFER_BIT);
          
             g_game.render();
 
             /* Swap front and back buffers */
             glfwSwapBuffers(pWindow);
 
-            /* Poll for and process events */
-            glfwPollEvents();
         }
         ResourceManager::unloadResources();
     }

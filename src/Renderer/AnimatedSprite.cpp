@@ -1,7 +1,7 @@
 #include "AnimatedSprite.h"
 #include "Texture2D.h"
 
-namespace Renderer {
+namespace RendererEngine {
 	AnimatedSprite::AnimatedSprite(const std::shared_ptr<Texture2D> pTexture,
 		const std::string initialSubTexture,
 		const std::shared_ptr<ShaderProgram> pShaderProgram,

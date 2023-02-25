@@ -86,10 +86,10 @@ bool Game::init()
 
 
     // Sprite initializing START
-    auto pSpriteShaderProgram = ResourceManager::loadShaders("SpriteShader", "res/shaders/vSprite.txt", "res/shaders/fSprite.txt");
+    auto pSpriteShaderProgram = ResourceManager::loadShaders("spriteShader", "res/shaders/vSprite.txt", "res/shaders/fSprite.txt");
     if (!pSpriteShaderProgram)
     {
-        std::cout << "Can't create shader program: " << "SpriteShader" << std::endl;
+        std::cout << "Can't create shader program: " << "spriteShader" << std::endl;
         return false;
     }
 
@@ -102,10 +102,10 @@ bool Game::init()
     std::vector<std::string> subTextureNames = { "eagle", "deadEagle", "star0", "star1", "star2", "star3", "star4", "star5" };
     auto pTextureAtlas = ResourceManager::loadTextureAtlas("DefaultTextureAtlas", "res/textures/map_16x16.png", std::move(subTextureNames), 16, 16);
 
-    auto pSprite = ResourceManager::loadSprite("NewSprite", "DefaultTextureAtlas", "SpriteShader", 100, 100, "eagle");
+    auto pSprite = ResourceManager::loadSprite("NewSprite", "DefaultTextureAtlas", "spriteShader", 100, 100, "eagle");
     pSprite->setPosition(glm::vec2(300, 100));
 
-    auto pAnimatedSprite = ResourceManager::loadAnimatedSprite("NewAnimatedSprite", "DefaultTextureAtlas", "SpriteShader", 100, 100, "eagle");
+    auto pAnimatedSprite = ResourceManager::loadAnimatedSprite("NewAnimatedSprite", "DefaultTextureAtlas", "spriteShader", 100, 100, "eagle");
     pAnimatedSprite->setPosition(glm::vec2(300, 300));
 
     std::vector<std::pair<std::string, uint64_t>> eagleState;
@@ -168,7 +168,7 @@ bool Game::init()
         "tankRight2"
     };
     auto pTanksTextureAtlas = ResourceManager::loadTextureAtlas("TanksTextureAtlas", "res/textures/tanks.png", std::move(tanksSubTextureNames), 16, 16);
-    auto pTanksAnimatedSprite = ResourceManager::loadAnimatedSprite("TanksAnimatedSprite", "TanksTextureAtlas", "SpriteShader", 100, 100, "tankTop1");
+    auto pTanksAnimatedSprite = ResourceManager::loadAnimatedSprite("tanksAnimatedSprite", "TanksTextureAtlas", "spriteShader", 100, 100, "tankTop1");
 
     std::vector<std::pair<std::string, uint64_t>> tankTopState;
     tankTopState.emplace_back(std::make_pair<std::string, uint64_t>("tankTop1", 500000000));

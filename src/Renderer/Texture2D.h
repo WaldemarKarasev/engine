@@ -6,7 +6,7 @@
 #include <iostream>
 #include <map>
 
-namespace Renderer {
+namespace RendererEngine {
 	class Texture2D
 	{
 	public:
