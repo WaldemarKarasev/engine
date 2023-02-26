@@ -144,8 +144,12 @@ int main(int argc, char** argv)
             /* Render here */
             RendererEngine::Renderer::clear();
             //glClear(GL_COLOR_BUFFER_BIT);
-         
+
+
+
             g_game.render();
+
+
 
             /* Swap front and back buffers */
             glfwSwapBuffers(pWindow);

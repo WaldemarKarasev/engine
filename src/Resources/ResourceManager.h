@@ -63,6 +63,8 @@ public:
 															     const unsigned int subTextureHeight);
 
 
+	static bool loadJSONResources(const std::string& JSONPath);
+
 private:
 	// Path to shaders files
 	static std::string getFileString(const std::string& relativeFilePath);
