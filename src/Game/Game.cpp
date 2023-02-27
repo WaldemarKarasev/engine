@@ -6,8 +6,8 @@
 #include "../Renderer/Sprite.h"
 #include "../Renderer/AnimatedSprite.h"
 
-#include "Tank.h"
-
+#include "GameObjects/Tank.h"
+#include "Level.h"
 
 #include <GLFW/glfw3.h>
 #include <glm/vec2.hpp>
@@ -30,17 +30,27 @@ Game::~Game()
 
 void Game::render()
 {
-    //ResourceManager::getAnimatedSprite("NewAnimatedSprite")->render();
     if (m_pTank)
     {
         m_pTank->render();
     }
+    if (m_pLevel)
+    {
+        m_pLevel->render();
+    }
+
+    //ResourceManager::getAnimatedSprite("NewAnimatedSprite")->render();
 }
 
 void Game::update(const uint64_t delta)
 {
-    //ResourceManager::getAnimatedSprite("NewAnimatedSprite")->update(delta);
-    if (m_pTank)
+    
+    if (m_pLevel)
+    {
+        m_pLevel->update(delta);
+    }
+
+     if (m_pTank)
     {
         if (m_keys[GLFW_KEY_W])
         {
@@ -93,31 +103,25 @@ bool Game::init()
         return false;
     }
 
-
     auto pTankAnimatedSprite = ResourceManager::getAnimatedSprite("tankAnimatedSprite");
     if (!pTankAnimatedSprite)
     {
         std::cout << "Can't find animated sprite: " << "tankAnimatedSprite" << std::endl;
         return false;
     }
-    // Transformation matrix
-    // for the 1st triangle
-    glm::mat4 modelMatrix_1 = glm::mat4(1.f);
-    modelMatrix_1 = glm::translate(modelMatrix_1, glm::vec3(100.f, 200.f, 0.f));
-
-    // for the 2nd triangle
-    glm::mat4 modelMatrix_2 = glm::mat4(1.f);
-    modelMatrix_2 = glm::translate(modelMatrix_2, glm::vec3(590.f, 50.f, 0.f));
 
     // orthographic projection matrix
     glm::mat4 projectionMatrix = glm::ortho(0.f, static_cast<float>(m_windowSize.x), 0.f, static_cast<float>(m_windowSize.y), -100.f, 100.f);
 
 
     pSpriteShaderProgram->use();
+    pSpriteShaderProgram->setInt("tex", 0);
     pSpriteShaderProgram->setMatrix4("projectionMat", projectionMatrix);
 
-    m_pTank = std::make_unique<Tank>(pTankAnimatedSprite, 0.0000001f, glm::vec2(100, 100));
+    //m_pTank = std::make_unique<Tank>(pTankAnimatedSprite, 0.0000001f, glm::vec2(16.0f, 16.0f));
+    m_pTank = std::make_unique<Tank>(pTankAnimatedSprite, 0.0000001f, glm::vec2(100, 100), glm::vec2(16.0f, 16.0f));
+
+    m_pLevel = std::make_unique<Level>(ResourceManager::getLevels()[0]);
 
     return true;
-
 }
