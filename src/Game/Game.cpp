@@ -4,7 +4,6 @@
 #include "../Renderer/ShaderProgram.h"
 #include "../Renderer/Texture2D.h"
 #include "../Renderer/Sprite.h"
-#include "../Renderer/AnimatedSprite.h"
 
 #include "GameObjects/Tank.h"
 #include "Level.h"
@@ -30,13 +29,13 @@ Game::~Game()
 
 void Game::render()
 {
-    if (m_pTank)
-    {
-        m_pTank->render();
-    }
     if (m_pLevel)
     {
         m_pLevel->render();
+    }
+    if (m_pTank)
+    {
+        m_pTank->render();
     }
 
     //ResourceManager::getAnimatedSprite("NewAnimatedSprite")->render();
@@ -103,13 +102,6 @@ bool Game::init()
         return false;
     }
 
-    auto pTankAnimatedSprite = ResourceManager::getAnimatedSprite("tankAnimatedSprite");
-    if (!pTankAnimatedSprite)
-    {
-        std::cout << "Can't find animated sprite: " << "tankAnimatedSprite" << std::endl;
-        return false;
-    }
-
     // orthographic projection matrix
     glm::mat4 projectionMatrix = glm::ortho(0.f, static_cast<float>(m_windowSize.x), 0.f, static_cast<float>(m_windowSize.y), -100.f, 100.f);
 
@@ -119,7 +111,11 @@ bool Game::init()
     pSpriteShaderProgram->setMatrix4("projectionMat", projectionMatrix);
 
     //m_pTank = std::make_unique<Tank>(pTankAnimatedSprite, 0.0000001f, glm::vec2(16.0f, 16.0f));
-    m_pTank = std::make_unique<Tank>(pTankAnimatedSprite, 0.0000001f, glm::vec2(100, 100), glm::vec2(16.0f, 16.0f));
+    m_pTank = std::make_unique<Tank>(ResourceManager::getSprite("player1_yellow_type1_top"),
+                                     ResourceManager::getSprite("player1_yellow_type1_left"),
+                                     ResourceManager::getSprite("player1_yellow_type1_right"),
+                                     ResourceManager::getSprite("player1_yellow_type1_bottom"),
+                                     0.0000001f, glm::vec2(100, 100), glm::vec2(16.0f, 16.0f));
 
     m_pLevel = std::make_unique<Level>(ResourceManager::getLevels()[0]);
 

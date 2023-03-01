@@ -51,9 +51,31 @@ void glfwWindowSizeCallback(GLFWwindow* pWindow, int width, int height)
     g_windowSize.x = width;
     g_windowSize.y = height;
     
+    // resize window by ratio of level map
+    // In the future this variable should be moved to the Game class.
+    const float map_aspect_ratio = 13.0f / 14.0f;
+
+    unsigned int viewPortWidth = g_windowSize.x;
+    unsigned int viewPortHeight = g_windowSize.y;
+    unsigned int viewPortLeftOffset = 0;
+    unsigned int viewPortBottomOffset = 0;
+
+    if (static_cast<float>(g_windowSize.x) / g_windowSize.y > map_aspect_ratio)
+    {
+        viewPortWidth = static_cast<unsigned int>(g_windowSize.y * map_aspect_ratio);
+        viewPortLeftOffset = (g_windowSize.x - viewPortWidth) / 2;
+    }
+    else
+    {
+        viewPortHeight = static_cast<unsigned int>(g_windowSize.x / map_aspect_ratio);
+        viewPortBottomOffset = (g_windowSize.y - viewPortHeight) / 2;
+
+    }
+
+
     // show OpenGL where to draw
     //glViewport(0, 0, g_windowSize.x, g_windowSize.y);
-    RendererEngine::Renderer::setViewport(width, height);
+    RendererEngine::Renderer::setViewport(viewPortWidth, viewPortHeight, viewPortLeftOffset, viewPortBottomOffset);
 
 }
 
