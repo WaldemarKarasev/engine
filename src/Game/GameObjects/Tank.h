@@ -22,13 +22,9 @@ public:
 		Right
 	};
 
-	Tank(std::shared_ptr<RendererEngine::Sprite> pSprite_top,
-		std::shared_ptr<RendererEngine::Sprite> pSprite_left,
-		std::shared_ptr<RendererEngine::Sprite> pSprite_right,
-		std::shared_ptr<RendererEngine::Sprite> pSprite_bottom,
-		const float velocity,
-		const glm::vec2& position, 
-		const glm::vec2& size);
+	Tank(const float velocity,
+		 const glm::vec2& position, 
+		 const glm::vec2& size);
 
 	void render() const override;
 	void setOrientation(const EOrientation eOrientation);

@@ -29,13 +29,14 @@ Game::~Game()
 
 void Game::render()
 {
-    if (m_pLevel)
-    {
-        m_pLevel->render();
-    }
     if (m_pTank)
     {
         m_pTank->render();
+    }
+    
+    if (m_pLevel)
+    {
+        m_pLevel->render();
     }
 
     //ResourceManager::getAnimatedSprite("NewAnimatedSprite")->render();
@@ -43,7 +44,7 @@ void Game::render()
 
 void Game::update(const uint64_t delta)
 {
-    
+
     if (m_pLevel)
     {
         m_pLevel->update(delta);
@@ -77,6 +78,7 @@ void Game::update(const uint64_t delta)
         }
         m_pTank->update(delta);
     }
+    
 }
 
 void Game::setKey(int key, const int action)
@@ -95,13 +97,6 @@ bool Game::init()
         return false;
     }
 
-    auto ptextureAtlas = ResourceManager::getTexture("tanksTextureAtlas");
-    if (!ptextureAtlas)
-    {
-        std::cout << "Can't find texture atlas: " << "tanksTextureAtlas" << std::endl;
-        return false;
-    }
-
     // orthographic projection matrix
     glm::mat4 projectionMatrix = glm::ortho(0.f, static_cast<float>(m_windowSize.x), 0.f, static_cast<float>(m_windowSize.y), -100.f, 100.f);
 
@@ -111,11 +106,7 @@ bool Game::init()
     pSpriteShaderProgram->setMatrix4("projectionMat", projectionMatrix);
 
     //m_pTank = std::make_unique<Tank>(pTankAnimatedSprite, 0.0000001f, glm::vec2(16.0f, 16.0f));
-    m_pTank = std::make_unique<Tank>(ResourceManager::getSprite("player1_yellow_type1_top"),
-                                     ResourceManager::getSprite("player1_yellow_type1_left"),
-                                     ResourceManager::getSprite("player1_yellow_type1_right"),
-                                     ResourceManager::getSprite("player1_yellow_type1_bottom"),
-                                     0.0000001f, glm::vec2(100, 100), glm::vec2(16.0f, 16.0f));
+    m_pTank = std::make_unique<Tank>(0.0000001f, glm::vec2(100, 100), glm::vec2(16.0f, 16.0f));
 
     m_pLevel = std::make_unique<Level>(ResourceManager::getLevels()[0]);
 
