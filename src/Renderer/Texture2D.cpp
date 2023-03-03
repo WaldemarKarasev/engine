@@ -1,6 +1,6 @@
 #include "Texture2D.h"
 
-namespace RendererEngine {
+namespace RenderEngine {
 	Texture2D::Texture2D(const GLuint width, GLuint height, 
 						 const unsigned char* data,
 						 const unsigned int channels,
@@ -68,7 +68,7 @@ namespace RendererEngine {
 		glDeleteTextures(1, &m_ID);
 	}
 
-	void Texture2D::addSubTexture(const std::string name, const glm::vec2& leftBottomUV, const glm::vec2& rightTopUV)
+	void Texture2D::addSubTexture(std::string name, const glm::vec2& leftBottomUV, const glm::vec2& rightTopUV)
 	{
 		m_subTextures.emplace(std::move(name), SubTexture2D(leftBottomUV, rightTopUV));
 	}

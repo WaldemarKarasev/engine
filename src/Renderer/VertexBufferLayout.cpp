@@ -2,9 +2,9 @@
 
 #include "VertexBufferLayout.h"
 
-namespace RendererEngine
+namespace RenderEngine
 {
-	RendererEngine::VertexBufferLayout::VertexBufferLayout()
+	RenderEngine::VertexBufferLayout::VertexBufferLayout()
 		: m_stride(0)
 	{}
 	void VertexBufferLayout::reserveElements(const size_t count)

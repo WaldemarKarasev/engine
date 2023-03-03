@@ -6,7 +6,7 @@
 
 #include <string>
 
-namespace RendererEngine
+namespace RenderEngine
 {
 	class VertexArray;
 	class IndexBuffer;

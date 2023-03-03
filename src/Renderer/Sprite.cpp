@@ -6,10 +6,10 @@
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-namespace RendererEngine {
-	Sprite::Sprite(const std::shared_ptr<Texture2D> pTexture,
-		const std::string initialSubTexture,
-		const std::shared_ptr<ShaderProgram> pShaderProgram)
+namespace RenderEngine {
+	Sprite::Sprite(std::shared_ptr<Texture2D> pTexture,
+		std::string initialSubTexture,
+		std::shared_ptr<ShaderProgram> pShaderProgram)
 		: m_pTexture(std::move(pTexture))
 		, m_pShaderProgram(std::move(pShaderProgram))
 		, m_lastFrameId(0)
@@ -60,15 +60,9 @@ namespace RendererEngine {
 		// EBO
 		m_indexBuffer.init(indices, 6);
 		
-
-
 		// clearing data in buffers
 		m_vertexArray.unbind();
 		m_indexBuffer.unbind();
-
-		/*glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glBindVertexArray(0);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);*/
 	}
 
 	Sprite::~Sprite()

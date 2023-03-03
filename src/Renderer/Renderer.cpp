@@ -1,6 +1,6 @@
 #include "Renderer.h"
 
-namespace RendererEngine
+namespace RenderEngine
 {
 	void Renderer::draw(const VertexArray& vertexArray, const IndexBuffer& indexBuffer, const ShaderProgram& shaderProgram)
 	{

@@ -4,7 +4,7 @@
 #include <memory>
 #include <map>
 #include <vector>
-namespace RendererEngine
+namespace RenderEngine
 {
 	class ShaderProgram;
 	class Texture2D;
@@ -27,26 +27,26 @@ public:
 	
 
 	// ShaderPeogram loading and getting
-	static std::shared_ptr<RendererEngine::ShaderProgram> loadShaders(const std::string& shaderName, const std::string& vertexPath, const std::string& fragmentPath);
-	static std::shared_ptr<RendererEngine::ShaderProgram> getShaderProgram(const std::string& shaderName);
+	static std::shared_ptr<RenderEngine::ShaderProgram> loadShaders(const std::string& shaderName, const std::string& vertexPath, const std::string& fragmentPath);
+	static std::shared_ptr<RenderEngine::ShaderProgram> getShaderProgram(const std::string& shaderName);
 
 	// Textures loading and getting
-	static std::shared_ptr<RendererEngine::Texture2D> loadTexture(const std::string& textureName, const std::string& texturePath);
-	static std::shared_ptr<RendererEngine::Texture2D> getTexture(const std::string& textureName);
+	static std::shared_ptr<RenderEngine::Texture2D> loadTexture(const std::string& textureName, const std::string& texturePath);
+	static std::shared_ptr<RenderEngine::Texture2D> getTexture(const std::string& textureName);
 
 	// Sprites loading and getting
-	static std::shared_ptr<RendererEngine::Sprite> loadSprite(const std::string& spriteName,
+	static std::shared_ptr<RenderEngine::Sprite> loadSprite(const std::string& spriteName,
 														const std::string& textureName,
 														const std::string& shaderName,
 														const std::string& subTextureName = "default");
 
-	static std::shared_ptr<RendererEngine::Sprite> getSprite(const std::string& spriteName);
+	static std::shared_ptr<RenderEngine::Sprite> getSprite(const std::string& spriteName);
 
 	
 
 
 	// Texture Atlas (SubTextures) manipulation
-	static std::shared_ptr<RendererEngine::Texture2D> loadTextureAtlas(const std::string textureName,
+	static std::shared_ptr<RenderEngine::Texture2D> loadTextureAtlas(const std::string textureName,
 																 const std::string texturePath,
 											        			 const std::vector<std::string> subTextures,
 															     const unsigned int subTextureWidth,
@@ -61,13 +61,13 @@ private:
 	// Path to shaders files
 	static std::string getFileString(const std::string& relativeFilePath);
 
-	typedef std::map<const std::string, std::shared_ptr<RendererEngine::ShaderProgram>> ShaderProgramsMap;
+	typedef std::map<const std::string, std::shared_ptr<RenderEngine::ShaderProgram>> ShaderProgramsMap;
 	static ShaderProgramsMap m_shaderPrograms;
 
-	typedef std::map<const std::string, std::shared_ptr<RendererEngine::Texture2D>> TexturesMap;
+	typedef std::map<const std::string, std::shared_ptr<RenderEngine::Texture2D>> TexturesMap;
 	static TexturesMap m_textures;
 
-	typedef std::map<const std::string, std::shared_ptr<RendererEngine::Sprite>> SpritesMap;
+	typedef std::map<const std::string, std::shared_ptr<RenderEngine::Sprite>> SpritesMap;
 	static SpritesMap m_sprites;
 
 	static std::vector<std::vector<std::string>> m_levels;

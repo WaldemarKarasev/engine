@@ -6,7 +6,7 @@
 #include "IGameObject.h"
 #include "../../Renderer/SpriteAnimator.h"
 
-namespace RendererEngine
+namespace RenderEngine
 {
 	class Sprite;
 }
@@ -14,7 +14,7 @@ namespace RendererEngine
 class Tank : public IGameObject
 {
 public:
-	enum class EOrientation 
+	enum class EOrientation : uint8_t
 	{
 		Top, 
 		Bottom,
@@ -33,14 +33,14 @@ public:
 
 private:
 	EOrientation m_eOrientation;
-	std::shared_ptr<RendererEngine::Sprite> m_pSprite_top;
-	std::shared_ptr<RendererEngine::Sprite> m_pSprite_left;
-	std::shared_ptr<RendererEngine::Sprite> m_pSprite_right;
-	std::shared_ptr<RendererEngine::Sprite> m_pSprite_bottom;
-	RendererEngine::SpriteAnimator m_spriteAnimator_top;
-	RendererEngine::SpriteAnimator m_spriteAnimator_left;
-	RendererEngine::SpriteAnimator m_spriteAnimator_right;
-	RendererEngine::SpriteAnimator m_spriteAnimator_bottom;
+	std::shared_ptr<RenderEngine::Sprite> m_pSprite_top;
+	std::shared_ptr<RenderEngine::Sprite> m_pSprite_left;
+	std::shared_ptr<RenderEngine::Sprite> m_pSprite_right;
+	std::shared_ptr<RenderEngine::Sprite> m_pSprite_bottom;
+	RenderEngine::SpriteAnimator m_spriteAnimator_top;
+	RenderEngine::SpriteAnimator m_spriteAnimator_left;
+	RenderEngine::SpriteAnimator m_spriteAnimator_right;
+	RenderEngine::SpriteAnimator m_spriteAnimator_bottom;
 
 
 	bool m_move;

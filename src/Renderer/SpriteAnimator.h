@@ -2,7 +2,7 @@
 
 #include <memory>
 
-namespace RendererEngine
+namespace RenderEngine
 {
 
 	class Sprite;

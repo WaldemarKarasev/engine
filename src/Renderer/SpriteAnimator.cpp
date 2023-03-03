@@ -2,7 +2,7 @@
 
 #include "Sprite.h"
 
-namespace RendererEngine
+namespace RenderEngine
 {
 	SpriteAnimator::SpriteAnimator(std::shared_ptr<Sprite> pSprite)
 		: m_pSprite(std::move(pSprite))

@@ -100,15 +100,11 @@ bool Game::init()
     // orthographic projection matrix
     glm::mat4 projectionMatrix = glm::ortho(0.f, static_cast<float>(m_windowSize.x), 0.f, static_cast<float>(m_windowSize.y), -100.f, 100.f);
 
-
     pSpriteShaderProgram->use();
     pSpriteShaderProgram->setInt("tex", 0);
     pSpriteShaderProgram->setMatrix4("projectionMat", projectionMatrix);
 
-    //m_pTank = std::make_unique<Tank>(pTankAnimatedSprite, 0.0000001f, glm::vec2(16.0f, 16.0f));
     m_pTank = std::make_unique<Tank>(0.0000001f, glm::vec2(100, 100), glm::vec2(16.0f, 16.0f));
-
-    m_pLevel = std::make_unique<Level>(ResourceManager::getLevels()[0]);
-
+    m_pLevel = std::make_unique<Level>(ResourceManager::getLevels()[1]);
     return true;
 }

@@ -53,7 +53,7 @@ std::string ResourceManager::getFileString(const std::string& relativeFilePath)
 	return buffer.str();
 }
 
-std::shared_ptr<RendererEngine::ShaderProgram> ResourceManager::loadShaders(const std::string& shaderName, const std::string& vertexPath, const std::string& fragmentPath)
+std::shared_ptr<RenderEngine::ShaderProgram> ResourceManager::loadShaders(const std::string& shaderName, const std::string& vertexPath, const std::string& fragmentPath)
 {
 	std::string vertexString = getFileString(vertexPath);
 	if (vertexString.empty())
@@ -69,7 +69,7 @@ std::shared_ptr<RendererEngine::ShaderProgram> ResourceManager::loadShaders(cons
 		return nullptr;
 	}
 	
-	std::shared_ptr<RendererEngine::ShaderProgram>& newShader = m_shaderPrograms.emplace(shaderName, std::make_shared<RendererEngine::ShaderProgram>(vertexString, fragmentString)).first->second;
+	std::shared_ptr<RenderEngine::ShaderProgram>& newShader = m_shaderPrograms.emplace(shaderName, std::make_shared<RenderEngine::ShaderProgram>(vertexString, fragmentString)).first->second;
 	if (newShader->isCompiled())
 	{
 		return newShader;
@@ -82,7 +82,7 @@ std::shared_ptr<RendererEngine::ShaderProgram> ResourceManager::loadShaders(cons
 	return nullptr;
 }
 
-std::shared_ptr<RendererEngine::ShaderProgram> ResourceManager::getShaderProgram(const std::string& shaderName)
+std::shared_ptr<RenderEngine::ShaderProgram> ResourceManager::getShaderProgram(const std::string& shaderName)
 {
 	ShaderProgramsMap::const_iterator it = m_shaderPrograms.find(shaderName);
 	if (it != m_shaderPrograms.end())
@@ -94,7 +94,7 @@ std::shared_ptr<RendererEngine::ShaderProgram> ResourceManager::getShaderProgram
 	return nullptr;
 }
 
-std::shared_ptr<RendererEngine::Texture2D> ResourceManager::loadTexture(const std::string& textureName, const std::string& texturePath)
+std::shared_ptr<RenderEngine::Texture2D> ResourceManager::loadTexture(const std::string& textureName, const std::string& texturePath)
 {
 	int channels = 0;
 	int width = 0;
@@ -108,7 +108,7 @@ std::shared_ptr<RendererEngine::Texture2D> ResourceManager::loadTexture(const st
 		return nullptr;
 	}
 
-	std::shared_ptr<RendererEngine::Texture2D> newTexture = m_textures.emplace(textureName, std::make_shared<RendererEngine::Texture2D>(width,
+	std::shared_ptr<RenderEngine::Texture2D> newTexture = m_textures.emplace(textureName, std::make_shared<RenderEngine::Texture2D>(width,
 																															height,
 																															pixels,
 																															channels,
@@ -120,7 +120,7 @@ std::shared_ptr<RendererEngine::Texture2D> ResourceManager::loadTexture(const st
 	return newTexture;
 }
 
-std::shared_ptr<RendererEngine::Texture2D> ResourceManager::getTexture(const std::string& textureName)
+std::shared_ptr<RenderEngine::Texture2D> ResourceManager::getTexture(const std::string& textureName)
 {
 	TexturesMap::const_iterator it = m_textures.find(textureName);
 	if (it != m_textures.end())
@@ -132,7 +132,7 @@ std::shared_ptr<RendererEngine::Texture2D> ResourceManager::getTexture(const std
 	return nullptr;
 }
 
-std::shared_ptr<RendererEngine::Sprite> ResourceManager::loadSprite(const std::string& spriteName,
+std::shared_ptr<RenderEngine::Sprite> ResourceManager::loadSprite(const std::string& spriteName,
 																    const std::string& textureName,
 																    const std::string& shaderName,
 																    const std::string& subTextureName)
@@ -149,14 +149,14 @@ std::shared_ptr<RendererEngine::Sprite> ResourceManager::loadSprite(const std::s
 		std::cerr << "Can't find the shader: " << shaderName << " for the sprite: " << spriteName << std::endl;
 	}
 
-	std::shared_ptr<RendererEngine::Sprite> newSprite = m_sprites.emplace(spriteName, std::make_shared<RendererEngine::Sprite>(pTexture,
+	std::shared_ptr<RenderEngine::Sprite> newSprite = m_sprites.emplace(spriteName, std::make_shared<RenderEngine::Sprite>(pTexture,
 																												   subTextureName,
 																												   pShader)).first->second;
 
 	return newSprite;
 }
 
-std::shared_ptr<RendererEngine::Sprite> ResourceManager::getSprite(const std::string& spriteName)
+std::shared_ptr<RenderEngine::Sprite> ResourceManager::getSprite(const std::string& spriteName)
 {
 	SpritesMap::const_iterator it = m_sprites.find(spriteName);
 	if (it != m_sprites.end())
@@ -168,7 +168,7 @@ std::shared_ptr<RendererEngine::Sprite> ResourceManager::getSprite(const std::st
 	return nullptr;
 }
 
-std::shared_ptr<RendererEngine::Texture2D> ResourceManager::loadTextureAtlas(const std::string textureName,
+std::shared_ptr<RenderEngine::Texture2D> ResourceManager::loadTextureAtlas(const std::string textureName,
 													  const std::string texturePath,
 													  const std::vector<std::string> subTextures,
 													  const unsigned int subTextureWidth,
@@ -182,10 +182,10 @@ std::shared_ptr<RendererEngine::Texture2D> ResourceManager::loadTextureAtlas(con
 		unsigned int currentTextureOffsetX = 0;
 		unsigned int currentTextureOffsetY = textureHeight;
 
-		for (const auto& currentSubTextureName : subTextures)
+		for (auto& currentSubTextureName : subTextures)
 		{
 			// 0.01 for subTExture buffer
-			glm::vec2 leftBottomUV(static_cast<float>(currentTextureOffsetX + 0.01f) / textureWidth,                 static_cast<float>(currentTextureOffsetY - subTextureHeight +0.01f) / textureHeight);
+			glm::vec2 leftBottomUV(static_cast<float>(currentTextureOffsetX + 0.01f) / textureWidth,                 static_cast<float>(currentTextureOffsetY - subTextureHeight + 0.01f) / textureHeight);
 			glm::vec2 rightTopUV(static_cast<float>(currentTextureOffsetX + subTextureWidth - 0.01f) / textureWidth, static_cast<float>(currentTextureOffsetY - 0.01f) / textureHeight);
 
 			pTexture->addSubTexture(std::move(currentSubTextureName), leftBottomUV, rightTopUV);
@@ -266,7 +266,7 @@ bool ResourceManager::loadJSONResources(const std::string& JSONPath)
 			const std::string textureAtlas = currentSprite["textureAtlas"].GetString();
 			const std::string shader = currentSprite["shader"].GetString();
 			const std::string subTexture = currentSprite["initialSubTexture"].GetString();
-
+			
 			auto pSprite = loadSprite(name, textureAtlas, shader, subTexture);
 			if (!pSprite)
 			{
@@ -277,14 +277,14 @@ bool ResourceManager::loadJSONResources(const std::string& JSONPath)
 			if (framesIt != currentSprite.MemberEnd())
 			{
 				const auto framesArray = framesIt->value.GetArray();
-				std::vector<RendererEngine::Sprite::FrameDescription> frameDescroptions;
+				std::vector<RenderEngine::Sprite::FrameDescription> frameDescroptions;
 				frameDescroptions.reserve(framesArray.Size());
 				for (const auto& currentFrame : framesArray)
 				{
 					const std::string subTextureStr = currentFrame["subTexture"].GetString();
 					const uint64_t duration = currentFrame["duration"].GetUint64();
 					const auto pTextureAtlas = getTexture(textureAtlas);
-					const auto pSubTexture = pTextureAtlas->getSubTexture(subTexture);
+					const auto pSubTexture = pTextureAtlas->getSubTexture(subTextureStr);
 					frameDescroptions.emplace_back(pSubTexture.leftBottomUV, pSubTexture.rightTopUV, duration);
 				}
 				pSprite->insertFrames(std::move(frameDescroptions));

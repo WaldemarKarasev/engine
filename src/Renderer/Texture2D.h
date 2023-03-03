@@ -6,7 +6,7 @@
 #include <iostream>
 #include <map>
 
-namespace RendererEngine {
+namespace RenderEngine {
 	class Texture2D
 	{
 	public:
@@ -41,7 +41,7 @@ namespace RendererEngine {
 		Texture2D& operator=(Texture2D&& texture2d) noexcept;
 		~Texture2D();
 
-		void addSubTexture(const std::string name, const glm::vec2& leftBottomUV, const glm::vec2& rightTopUV);
+		void addSubTexture(std::string name, const glm::vec2& leftBottomUV, const glm::vec2& rightTopUV);
 		const SubTexture2D getSubTexture(const std::string& name) const;
 		
 		// Texture W & H getting

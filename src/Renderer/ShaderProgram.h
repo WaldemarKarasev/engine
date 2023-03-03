@@ -4,7 +4,7 @@
 #include <string>
 #include <glm/mat4x4.hpp>
 
-namespace RendererEngine {
+namespace RenderEngine {
 	class ShaderProgram {
 	public:
 		ShaderProgram() = delete;

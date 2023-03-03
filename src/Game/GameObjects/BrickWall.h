@@ -5,7 +5,7 @@
 #include <array>
 #include <memory>
 
-namespace RendererEngine
+namespace RenderEngine
 {
 	class Sprite;
 }
@@ -14,7 +14,7 @@ class BrickWall : public IGameObject
 {
 public:
 
-	enum class EBrickWallType
+	enum class EBrickWallType : uint8_t
 	{
 		All,
 		Top,
@@ -27,7 +27,7 @@ public:
 		BottomRight
 	};
 
-	enum class EBrickState
+	enum class EBrickState : uint8_t
 	{
 		All = 0,
 		TopLeft,
@@ -47,7 +47,7 @@ public:
 		Destroyed
 	};
 
-	enum class EBrickLocation
+	enum class EBrickLocation : uint8_t
 	{
 		TopLeft,
 		TopRight,
@@ -64,6 +64,7 @@ private:
 	void renderBrickWall(const EBrickLocation eBrickLocation) const;
 	
 	std::array<EBrickState, 4> m_eCurrentBrickState;
-	std::array<std::shared_ptr<RendererEngine::Sprite>, 15> m_sprites;
+	std::array<std::shared_ptr<RenderEngine::Sprite>, 15> m_sprites;
+	std::array<glm::vec2, 4> m_blockOffsets;
 
 };

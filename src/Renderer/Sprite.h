@@ -11,7 +11,7 @@
 #include <memory>
 #include <string>
 
-namespace RendererEngine {
+namespace RenderEngine {
 
 	class Texture2D;
 	class ShaderProgram;
@@ -34,9 +34,9 @@ namespace RendererEngine {
 
 		};
 
-		Sprite(const std::shared_ptr<Texture2D> pTexture,
-			const std::string initialSubTexture,
-			const std::shared_ptr<ShaderProgram> pShaderProgram);
+		Sprite( std::shared_ptr<Texture2D> pTexture,
+			 std::string initialSubTexture,
+			 std::shared_ptr<ShaderProgram> pShaderProgram);
 
 		~Sprite();
 

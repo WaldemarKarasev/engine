@@ -75,7 +75,7 @@ void glfwWindowSizeCallback(GLFWwindow* pWindow, int width, int height)
 
     // show OpenGL where to draw
     //glViewport(0, 0, g_windowSize.x, g_windowSize.y);
-    RendererEngine::Renderer::setViewport(viewPortWidth, viewPortHeight, viewPortLeftOffset, viewPortBottomOffset);
+    RenderEngine::Renderer::setViewport(viewPortWidth, viewPortHeight, viewPortLeftOffset, viewPortBottomOffset);
 
 }
 
@@ -131,13 +131,13 @@ int main(int argc, char** argv)
     }
 
     // Displaying OpenGL version
-    std::cout << "Renderer: " << RendererEngine::Renderer::getRendererStr() << std::endl;
-    std::cout << "OpenGL version: " << RendererEngine::Renderer::getVersionStr() << std::endl;
+    std::cout << "Renderer: " << RenderEngine::Renderer::getRendererStr() << std::endl;
+    std::cout << "OpenGL version: " << RenderEngine::Renderer::getVersionStr() << std::endl;
     std::cout << "executablePath argv[0]: " << argv[0] << std::endl;
     
 
     //glClearColor(0, 0, 0, 1);    
-    RendererEngine::Renderer::setClearColor(0, 0, 0, 1);
+    RenderEngine::Renderer::setClearColor(0, 0, 0, 1);
 
 
     // Creating scope because we need delete ShaderPrograms before deleting glContext???
@@ -154,17 +154,19 @@ int main(int argc, char** argv)
             /* Poll for and process events */
             glfwPollEvents();
             
-
-
+            
+            
             auto currentTime = std::chrono::high_resolution_clock::now();
             uint64_t duration = std::chrono::duration_cast<std::chrono::nanoseconds>(currentTime - lastTime).count();
             lastTime = currentTime;
+            
+          
             g_game->update(duration);
 
 
 
             /* Render here */
-            RendererEngine::Renderer::clear();
+            RenderEngine::Renderer::clear();
             //glClear(GL_COLOR_BUFFER_BIT);
 
 
