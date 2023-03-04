@@ -38,7 +38,7 @@
 				"betonWall",
 				"trees",
 				"ice",
-				"wall",
+				"border",
 				"bullet",
 				"nothing"
 			]
@@ -436,10 +436,10 @@
             "initialSubTexture" : "ice"
         },
         {
-            "name"              : "wall",
+            "name"              : "border",
             "textureAtlas"      : "mapTextureAtlas_8x8",
             "shader"            : "spriteShader",
-            "initialSubTexture" : "wall"
+            "initialSubTexture" : "border"
         },
         {
             "name"              : "bullet",
@@ -782,7 +782,7 @@
 		},
 		{
 			"description" : [
-				"DDDDDDDDDDDDD",
+				"MDDDDDNDDDDDO",		
 				"D00D11D22D33D",
 				"D0DD1DD2DD3DD",
 				"DDDDDDDDDDDDD",
@@ -795,7 +795,7 @@
 				"DCCDGGDHHDIID",
 				"DCDDGDDHDDDDD",
 				"DDDDDH1GDDJJD",
-				"DDDDD0E2DDDDD"
+				"DDDDK0E2LDDDD"
 			]
 		}
 	]

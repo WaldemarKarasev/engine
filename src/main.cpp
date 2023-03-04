@@ -40,6 +40,7 @@ static bool GLLogCall(const char* function, const char* file, int line)
     }
 }
 
+// 13 * 16, 14 * 16
 glm::ivec2 g_windowSize(13 * 16, 14 * 16);
 
 std::unique_ptr<Game> g_game = std::make_unique<Game>(g_windowSize);
@@ -53,21 +54,21 @@ void glfwWindowSizeCallback(GLFWwindow* pWindow, int width, int height)
     
     // resize window by ratio of level map
     // In the future this variable should be moved to the Game class.
-    const float map_aspect_ratio = 13.0f / 14.0f;
+    const float level_aspect_ratio = static_cast<float>(g_game->getCurrentLevelWidth()) / g_game->getCurrentLevelHeight();
 
     unsigned int viewPortWidth = g_windowSize.x;
     unsigned int viewPortHeight = g_windowSize.y;
     unsigned int viewPortLeftOffset = 0;
     unsigned int viewPortBottomOffset = 0;
 
-    if (static_cast<float>(g_windowSize.x) / g_windowSize.y > map_aspect_ratio)
+    if (static_cast<float>(g_windowSize.x) / g_windowSize.y > level_aspect_ratio)
     {
-        viewPortWidth = static_cast<unsigned int>(g_windowSize.y * map_aspect_ratio);
+        viewPortWidth = static_cast<unsigned int>(g_windowSize.y * level_aspect_ratio);
         viewPortLeftOffset = (g_windowSize.x - viewPortWidth) / 2;
     }
     else
     {
-        viewPortHeight = static_cast<unsigned int>(g_windowSize.x / map_aspect_ratio);
+        viewPortHeight = static_cast<unsigned int>(g_windowSize.x / level_aspect_ratio);
         viewPortBottomOffset = (g_windowSize.y - viewPortHeight) / 2;
 
     }
@@ -138,6 +139,7 @@ int main(int argc, char** argv)
 
     //glClearColor(0, 0, 0, 1);    
     RenderEngine::Renderer::setClearColor(0, 0, 0, 1);
+    RenderEngine::Renderer::setDepthTest(true);
 
 
     // Creating scope because we need delete ShaderPrograms before deleting glContext???
@@ -145,7 +147,7 @@ int main(int argc, char** argv)
         // ResourceManager initialize
         ResourceManager::setExecutablePath(argv[0]);
         g_game->init();
-
+        glfwSetWindowSize(pWindow, static_cast<int>(g_game->getCurrentLevelWidth()), static_cast<int>(g_game->getCurrentLevelHeight()));
         auto lastTime = std::chrono::high_resolution_clock::now();
 
         /* Loop until the user closes the window */

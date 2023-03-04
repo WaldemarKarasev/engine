@@ -18,6 +18,8 @@ public:
 	void update(const uint64_t delta);
 	void setKey(int key, const int action);
 	bool init();
+	size_t getCurrentLevelWidth() const;
+	size_t getCurrentLevelHeight() const;
 
 private:
 

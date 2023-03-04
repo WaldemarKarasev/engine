@@ -69,7 +69,7 @@ namespace RenderEngine {
 	{
 	}
 
-	void Sprite::render(const glm::vec2& position, const glm::vec2& size, const float rotation, const size_t frameId) const
+	void Sprite::render(const glm::vec2& position, const glm::vec2& size, const float rotation, const float layer, const size_t frameId) const
 	{
 		if (m_lastFrameId != frameId)
 		{
@@ -99,7 +99,8 @@ namespace RenderEngine {
 		model = glm::scale(model, glm::vec3(size, 1.0f));
 
 		m_pShaderProgram->setMatrix4("modelMat", model);
-		//glBindVertexArray(m_VAO);
+		m_pShaderProgram->setFloat("layer", layer);
+
 		m_vertexArray.bind();
 
 		// in slot GL_TEXTURE0 bind texture m_pTexture
@@ -107,10 +108,6 @@ namespace RenderEngine {
 		m_pTexture->bind();
 
 		Renderer::draw(m_vertexArray, m_indexBuffer, *m_pShaderProgram);
-		
-		// clearing vertex array only for debuging
-		//glBindVertexArray(0);
-		//m_vertexArray.unbind();
 	}
 
 	void Sprite::insertFrames(std::vector<FrameDescription> framesDescriptions)

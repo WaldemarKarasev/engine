@@ -7,9 +7,10 @@
 
 Tank::Tank(const float velocity,
 		   const glm::vec2& position,
-		   const glm::vec2& size)
+		   const glm::vec2& size, 
+		   const float layer)
 
-	: IGameObject(position, size, 0.0f)
+	: IGameObject(position, size, 0.0f, layer)
 	, m_eOrientation(EOrientation::Top)
 	, m_pSprite_top(ResourceManager::getSprite("player1_yellow_type1_top"))
 	, m_pSprite_left(ResourceManager::getSprite("player1_yellow_type1_left"))
@@ -31,16 +32,16 @@ void Tank::render() const
 	switch (m_eOrientation)
 	{
 	case Tank::EOrientation::Top:
-		m_pSprite_top->render(m_position, m_size, m_rotation, m_spriteAnimator_top.getCurrentFrame());
+		m_pSprite_top->render(m_position, m_size, m_rotation, m_layer, m_spriteAnimator_top.getCurrentFrame());
 		break;
 	case Tank::EOrientation::Bottom:
-		m_pSprite_bottom->render(m_position, m_size, m_rotation, m_spriteAnimator_bottom.getCurrentFrame());
+		m_pSprite_bottom->render(m_position, m_size, m_rotation, m_layer, m_spriteAnimator_bottom.getCurrentFrame());
 		break;
 	case Tank::EOrientation::Left:
-		m_pSprite_left->render(m_position, m_size, m_rotation, m_spriteAnimator_left.getCurrentFrame());
+		m_pSprite_left->render(m_position, m_size, m_rotation, m_layer, m_spriteAnimator_left.getCurrentFrame());
 		break;
 	case Tank::EOrientation::Right:
-		m_pSprite_right->render(m_position, m_size, m_rotation, m_spriteAnimator_right.getCurrentFrame());
+		m_pSprite_right->render(m_position, m_size, m_rotation, m_layer, m_spriteAnimator_right.getCurrentFrame());
 		break;
 	default:
 		break;

@@ -27,6 +27,9 @@ namespace RenderEngine {
 		//
 		void setInt(const std::string& nmae, const GLuint value);
 
+		void setFloat(const std::string& name, const GLfloat value);
+
+
 		// set transformation matrix in shader
 		void setMatrix4(const std::string& name, const glm::mat4& matrix);
 
