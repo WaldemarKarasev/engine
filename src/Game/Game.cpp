@@ -8,6 +8,8 @@
 #include "GameObjects/Tank.h"
 #include "Level.h"
 
+#include "../Physics/PhysicsEngine.h"
+
 #include <GLFW/glfw3.h>
 #include <glm/vec2.hpp>
 #include <glm/mat4x4.hpp>
@@ -16,8 +18,8 @@
 //#include <chrono>
 
 Game::Game(const glm::ivec2& windowSize) 
-    : m_eCurrentGameState(EGameState::Active)
-    , m_windowSize(windowSize)
+    : m_windowSize(windowSize)
+    , m_eCurrentGameState(EGameState::Active)
 {
 	m_keys.fill(false);
 }
@@ -42,7 +44,7 @@ void Game::render()
     //ResourceManager::getAnimatedSprite("NewAnimatedSprite")->render();
 }
 
-void Game::update(const uint64_t delta)
+void Game::update(const double delta)
 {
 
     if (m_pLevel)
@@ -55,26 +57,27 @@ void Game::update(const uint64_t delta)
         if (m_keys[GLFW_KEY_W])
         {
             m_pTank->setOrientation(Tank::EOrientation::Top);
-            m_pTank->move(true);
+            m_pTank->setVelocity(m_pTank->getMaxVelocity());
+           
         }
         else if (m_keys[GLFW_KEY_A])
         {
             m_pTank->setOrientation(Tank::EOrientation::Left);
-            m_pTank->move(true);
+            m_pTank->setVelocity(m_pTank->getMaxVelocity());
         }
         else if (m_keys[GLFW_KEY_D])
         {
             m_pTank->setOrientation(Tank::EOrientation::Right);
-            m_pTank->move(true);
+            m_pTank->setVelocity(m_pTank->getMaxVelocity());
         }
         else if (m_keys[GLFW_KEY_S])
         {
             m_pTank->setOrientation(Tank::EOrientation::Bottom);
-            m_pTank->move(true);
+            m_pTank->setVelocity(m_pTank->getMaxVelocity());
         }
         else
         {
-            m_pTank->move(false);
+            m_pTank->setVelocity(0);
         }
         m_pTank->update(delta);
     }
@@ -97,9 +100,11 @@ bool Game::init()
         return false;
     }
 
-    m_pLevel = std::make_unique<Level>(ResourceManager::getLevels()[1]);
+    // Level loading
+    m_pLevel = std::make_shared<Level>(ResourceManager::getLevels()[0]);
     m_windowSize.x = static_cast<float>(m_pLevel->getLevelWidth());
     m_windowSize.y = static_cast<float>(m_pLevel->getLevelHeight());
+    Physics::PhysicsEngine::setCurrentLevel(m_pLevel);
 
     // orthographic projection matrix
     glm::mat4 projectionMatrix = glm::ortho(0.f, static_cast<float>(m_windowSize.x), 0.f, static_cast<float>(m_windowSize.y), -100.f, 100.f);
@@ -108,7 +113,8 @@ bool Game::init()
     pSpriteShaderProgram->setInt("tex", 0);
     pSpriteShaderProgram->setMatrix4("projectionMat", projectionMatrix);
 
-    m_pTank = std::make_unique<Tank>(0.0000001f, glm::vec2(m_pLevel->getPlayerRespawn_1()), glm::vec2(Level::BLOCK_SIZE, Level::BLOCK_SIZE), 0.0f);
+    m_pTank = std::make_shared<Tank>(0.1, glm::vec2(m_pLevel->getPlayerRespawn_1()), glm::vec2(Level::BLOCK_SIZE, Level::BLOCK_SIZE), 0.0f);
+    Physics::PhysicsEngine::addDynamicGameObjects(m_pTank);
     return true;
 }
 

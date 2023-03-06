@@ -43,7 +43,7 @@ public:
 
 	BetonWall(const EBetonWallType eBetonWallType, const glm::vec2& position, const glm::vec2& size, const float rotation, const float layer);
 	void render() const override;
-	void update(const uint64_t delta) override;
+	void update(const double delta) override;
 
 private:
 

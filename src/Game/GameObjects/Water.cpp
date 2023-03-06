@@ -12,7 +12,7 @@ Water::Water(const glm::vec2& position, const glm::vec2& size, const float rotat
 					   glm::vec2(0.0f, 0.0f),
 					   glm::vec2(m_size.x / 2.0f, 0) }
 {
-	
+	m_collides.emplace_back(glm::vec2(0), m_size);
 }
 
 
@@ -30,7 +30,7 @@ void Water::render() const
 	renderBlock(EBlockLocation::BottomRight);
 }
 
-void Water::update(const uint64_t delta)
+void Water::update(const double delta)
 {
 	m_spriteAnimator.update(delta);
 }
